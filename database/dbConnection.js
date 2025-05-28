@@ -1,0 +1,11 @@
+import mongoose from "mongoose";
+
+export const connection = async()=>{
+  mongoose.connect(process.env.URI,{
+    dbName:process.env.DBNAME,
+}).then(()=>{
+  console.log("Connected to database.")
+}).catch((err)=>{
+  console.log(`An error occured while connecting to database ${err}`)
+})
+}
