@@ -61,8 +61,42 @@ export const register = catchAsyncError(async (req,res,next) =>{
      const verificationCode = await user.generateVerificationCode();
      await user.save();
 
+    //  function sendVerificationCode(verificationMethod,verificationCode,email,password){
+    //   res.status(200).json({
+    //     success:true,
+    //   })
+    //  }
+
 
   } catch (error) {
-    
+     next( error);
   }
+
+
 } )
+
+async function sendVerificationCode(verificationMethod,verificationCode,email,password){
+  if(verificationMethod == "email"){
+    const message = generateEmailTemplate(verificationCode);
+    sendEmail({email,subject:"Your Verification Code",message})
+  }
+}
+
+function generateEmailTemplate(verificationCode){
+  return `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:20px;background:#fff;border:1px solid #ddd;border-radius:8px;">
+  <div style="font-size:18px;font-weight:bold;margin-bottom:10px;color:#333;">Email Verification</div>
+
+  <div style="font-size:14px;margin-bottom:15px;color:#555;">
+    Thank you for registering. Use the following verification code:
+  </div>
+
+  <div style="font-size:22px;letter-spacing:4px;padding:10px 20px;background:#f0f0f0;color:#000;border-radius:5px;display:inline-block;margin-bottom:15px;">
+    ${verificationCode}
+  </div>
+
+  <div style="font-size:12px;color:#888;">
+    This code is valid for 10 minutes. If you did not request this email, please ignore it.
+  </div>
+</div>`
+
+}
